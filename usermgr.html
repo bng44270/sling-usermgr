@@ -1,0 +1,50 @@
+<html>
+<head>
+<title>Create User</title>
+<script src="/system/sling.js"></script>
+<script type="text/javascript">
+    function getJSON(url) {
+        var resp ;
+        var xmlHttp ;
+
+        resp  = '' ;
+        xmlHttp = new XMLHttpRequest();
+
+        if(xmlHttp != null)
+        {
+            xmlHttp.open( "GET", url, false );
+            xmlHttp.send( null );
+            resp = xmlHttp.responseText;
+        }
+
+        return resp ;
+    }
+
+    function loadUsers() {
+        var jsontext = getJSON('/system/userManager/user.1.json');
+        var jsonar = jsontext.replace("{","").split("}")
+        for (var i = 0; i < jsonar.length; i++) {
+          thisuser = jsonar[i].split('"')[1];
+            if (thisuser.length > 0 && thisuser != 'anonymous') {
+                document.getElementById('userlist').innerHTML += '<li><a href="/home/users/' + thisuser[0] + '/' + thisuser + '.html">' + thisuser + '</a></li>';
+            }
+        } 
+    }
+</script>
+</head>
+<body onLoad="loadUsers();">
+<h3>Create New User</h3>
+<form method="POST" action="/system/userManager/user.create.html">
+Username<input type="text" name=":name" onChange="document.getElementById('uid').value = this.value;" /><br/>
+Password:<input type="password" name="pwd" /><br/>
+Confirm:<input type="password" name="pwdConfirm" /><br/>
+<input type="hidden" name="uid" id="uid" />
+<input type="hidden" name="sling:resourceType" value="users/edit" />
+<input type="submit" value="Create User" />
+</form>
+<h3>Existing Users</h3>
+  <ul id="userlist">
+  </ul>
+</body>
+</html>
+
