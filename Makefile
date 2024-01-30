@@ -34,7 +34,7 @@ all: tmp/users.json
 		curl -s -u $(call getdefine,tmp/server.txt,SLINGUSER):$(call getdefine,tmp/server.txt,SLINGPASS) -F"sling:resourceType=users/edit" $(call getdefine,tmp/server.txt,PROTO)://$(call getdefine,tmp/server.txt,HOSTPORT)$$USERPATH.html > /dev/null ; \
 		curl -s -u $(call getdefine,tmp/server.txt,SLINGUSER):$(call getdefine,tmp/server.txt,SLINGPASS) -F"uid=$$THISUSR" $(call getdefine,tmp/server.txt,PROTO)://$(call getdefine,tmp/server.txt,HOSTPORT)$$USERPATH.html > /dev/null ; \
 	done
-	curl -s -u $(call getdefine,tmp/server.txt,SLINGUSER):$(call getdefine,tmp/server.txt,SLINGPASS) -F"sling:resourceType=users/manage" $(call getdefine,tmp/server.txt,PROTO)://$(call getdefine,tmp/server.txt,HOSTPORT)/content/usermgr.html > /dev/null
+	curl -s -u $(call getdefine,tmp/server.txt,SLINGUSER):$(call getdefine,tmp/server.txt,SLINGPASS) -F"sling:resourceType=users/manage" $(call getdefine,tmp/server.txt,PROTO)://$(call getdefine,tmp/server.txt,HOSTPORT)/content/usermgr  > /dev/null
 
 clean:
 	rm -rf tmp
