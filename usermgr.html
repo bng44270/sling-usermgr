@@ -22,13 +22,16 @@
 
     function loadUsers() {
         var jsontext = getJSON('/system/userManager/user.1.json');
-        var jsonar = jsontext.replace("{","").split("}")
-        for (var i = 0; i < jsonar.length; i++) {
-          thisuser = jsonar[i].split('"')[1];
-            if (thisuser.length > 0 && thisuser != 'anonymous') {
-                document.getElementById('userlist').innerHTML += '<li><a href="/home/users/' + thisuser[0] + '/' + thisuser + '.html">' + thisuser + '</a></li>';
-            }
-        } 
+        var usersObj = JSON.parse(jsontext);
+
+        var validUsers = Object.keys(usersObj).filter(x => x != 'anonymous').forEach(thisUser => {
+            var listItem = document.createElement('li');
+            var link = document.createElement('a');
+            link.href = usersObj[thisUser].path + ".html";
+            link.innerText = thisUser;
+            listItem.appendChild(link);
+            document.getElementById('userlist').appendChild(listItem);
+        });
     }
 </script>
 </head>

@@ -21,7 +21,7 @@
     }
 
     function loadUserInfo() {
-        var jsontext = getJSON("<%= currentNode.uid %>.json");
+        var jsontext = getJSON("<%= currentNode %>.json");
         document.getElementById('userjson').innerHTML = jsontext.replace(/}$/,'\n}').replace(/^{/,'{\n').replace(/,/g,',\n');
     }
 </script>
