@@ -5,7 +5,6 @@ USERS_FILE = ${TMP_FOLDER}/users.json
 CONF_FILE = ${TMP_FOLDER}/server.txt
 GET_USER_LIST = ${LIB_FOLDER}/getusers.py
 GET_USER_PATH = ${LIB_FOLDER}/getuserpath.py
-
 ##################################
 
 SHELL := bash
@@ -22,19 +21,48 @@ define getdefine
 $$((cpp -P <<< "$$(cat $(1) ; echo "$(2)")") | sed 's/"//g')
 endef
 
+#####
+# Sling build-specific macros
+#####
+define httpdownload
+curl -s -u $(call slingauthstr) $(call slingurlstr,$(1)) > $(2)
+endef
+
+define slingauthstr
+$(call getdefine,tmp/server.txt,SLINGUSER):$(call getdefine,tmp/server.txt,SLINGPASS)
+endef
+
+define slingurlstr
+$(call getdefine,tmp/server.txt,PROTO)://$(call getdefine,tmp/server.txt,HOSTPORT)$(1)
+endef
+
+define slingmkcol
+curl -s -u $(call slingauthstr) -X MKCOL $(call slingurlstr,$(1)) > /dev/null
+endef
+
+define slinguploadfile
+curl -s -u $(call slingauthstr) -T $(1) $(call slingurlstr,$(2)) > /dev/null
+endef
+
+define slingsetproperty
+curl -s -u $(call slingauthstr) -F"$(1)" $(call slingurlstr,$(2)) > /dev/null
+endef
+
+
 all: tmp/users.json
-	curl -s -u $(call getdefine,tmp/server.txt,SLINGUSER):$(call getdefine,tmp/server.txt,SLINGPASS) -X MKCOL $(call getdefine,tmp/server.txt,PROTO)://$(call getdefine,tmp/server.txt,HOSTPORT)/apps/users > /dev/null
-	curl -s -u $(call getdefine,tmp/server.txt,SLINGUSER):$(call getdefine,tmp/server.txt,SLINGPASS) -X MKCOL $(call getdefine,tmp/server.txt,PROTO)://$(call getdefine,tmp/server.txt,HOSTPORT)/apps/users/edit > /dev/null
-	curl -s -u $(call getdefine,tmp/server.txt,SLINGUSER):$(call getdefine,tmp/server.txt,SLINGPASS) -X MKCOL $(call getdefine,tmp/server.txt,PROTO)://$(call getdefine,tmp/server.txt,HOSTPORT)/apps/users/manage > /dev/null
-	curl -s -u $(call getdefine,tmp/server.txt,SLINGUSER):$(call getdefine,tmp/server.txt,SLINGPASS) -X MKCOL $(call getdefine,tmp/server.txt,PROTO)://$(call getdefine,tmp/server.txt,HOSTPORT)/content/newuser > /dev/null
-	curl -s -u $(call getdefine,tmp/server.txt,SLINGUSER):$(call getdefine,tmp/server.txt,SLINGPASS) -T useredit.html $(call getdefine,tmp/server.txt,PROTO)://$(call getdefine,tmp/server.txt,HOSTPORT)/apps/users/edit/html.esp > /dev/null
-	curl -s -u $(call getdefine,tmp/server.txt,SLINGUSER):$(call getdefine,tmp/server.txt,SLINGPASS) -T usermgr.html $(call getdefine,tmp/server.txt,PROTO)://$(call getdefine,tmp/server.txt,HOSTPORT)/apps/users/manage/html.esp > /dev/null
+	$(call slingmkcol,/apps/users)
+	$(call slingmkcol,/apps/users/edit)
+	$(call slingmkcol,/apps/users/manage)
+	$(call slingmkcol,/apps/usermgr)
+	$(call slinguploadfile,useredit.html,/apps/users/edit/html.esp)
+	$(call slinguploadfile,usermgr.html,/apps/users/manage/html.esp)
+	$(call slinguploadfile,webrequest.js,/etc/clientlibs/webrequest.js)
 	python3 ${GET_USER_LIST} -f ${USERS_FILE} | while read THISUSR; do \
 		USERPATH="$$(python3 ${GET_USER_PATH} -f ${USERS_FILE} -u $$THISUSR)" ; \
-		curl -s -u $(call getdefine,tmp/server.txt,SLINGUSER):$(call getdefine,tmp/server.txt,SLINGPASS) -F"sling:resourceType=users/edit" $(call getdefine,tmp/server.txt,PROTO)://$(call getdefine,tmp/server.txt,HOSTPORT)$$USERPATH.html > /dev/null ; \
-		curl -s -u $(call getdefine,tmp/server.txt,SLINGUSER):$(call getdefine,tmp/server.txt,SLINGPASS) -F"uid=$$THISUSR" $(call getdefine,tmp/server.txt,PROTO)://$(call getdefine,tmp/server.txt,HOSTPORT)$$USERPATH.html > /dev/null ; \
+		$(call slingsetproperty,sling:resourceType=users/edit,$${USERPATH}.html) ; \
+		$(call slingsetproperty,uid=$${THISUSR},$${USERPATH}.html) ; \
 	done
-	curl -s -u $(call getdefine,tmp/server.txt,SLINGUSER):$(call getdefine,tmp/server.txt,SLINGPASS) -F"sling:resourceType=users/manage" $(call getdefine,tmp/server.txt,PROTO)://$(call getdefine,tmp/server.txt,HOSTPORT)/content/usermgr  > /dev/null
+	$(call slingsetproperty,sling:resourceType=users/manage,/apps/usermgr)
 
 clean:
 	rm -rf tmp
@@ -46,7 +74,7 @@ tmp/server.txt: tmp
 	$(call newdefine,Enter sling password,SLINGPASS,admin,tmp/server.txt)
 
 tmp/users.json: tmp/server.txt
-	curl -s -u $(call getdefine,tmp/server.txt,SLINGUSER):$(call getdefine,tmp/server.txt,SLINGPASS) $(call getdefine,tmp/server.txt,PROTO)://$(call getdefine,tmp/server.txt,HOSTPORT)/system/userManager/user.1.json > tmp/users.json
+	$(call httpdownload,/system/userManager/user.1.json,tmp/users.json)
 
 tmp:
 	mkdir tmp

@@ -2,39 +2,49 @@
 <head>
 <title>UserManager-<%= currentNode.uid %></title>
 </head>
-<script type="text/javascript">
-    function getJSON(url) {
-        var resp ;
-        var xmlHttp ;
-
-        resp  = '' ;
-        xmlHttp = new XMLHttpRequest();
-
-        if(xmlHttp != null)
-        {
-            xmlHttp.open( "GET", url, false );
-            xmlHttp.send( null );
-            resp = xmlHttp.responseText;
-        }
-
-        return resp ;
-    }
-
-    function loadUserInfo() {
-        var jsontext = getJSON("<%= currentNode %>.json");
-        document.getElementById('userjson').innerHTML = jsontext.replace(/}$/,'\n}').replace(/^{/,'{\n').replace(/,/g,',\n');
-    }
-</script>
-<body onLoad="loadUserInfo();">
+<script type="text/javascript" src="/etc/clientlibs/webrequest.js"></script>
+<body>
 <h3>Change Password for <%= currentNode.uid %></h3>
 <form method="POST" action="/system/userManager/user/<%= currentNode.uid %>.changePassword.html">
-Old Password:<input type="password" name="oldPwd" /><br/>
-New Password:<input type="password" name="newPwd" /><br/>
-Confirm New:<input type="password" name="newPwdConfirm" /><br/>
+<label for="oldPwd">Old Password</label><input id="oldPwd" type="password" name="oldPwd" /><br/>
+<label for="newPwd">New Password</label><input id="newPwd" type="password" name="newPwd" /><br/>
+<label for="newPwdConfirm">Confirm New</label><input id="newPwdConfirm" type="password" name="newPwdConfirm" /><br/>
 <input type="submit" value="Change Password" />
 </form><br/>
 <h3>User Information (JSON)</h3>
-<pre id="userjson"></pre>
-<br/><a href="/content/usermgr.html">Return to User Manager</a>
+<div id="userproperties"></div>
+<a href="<%= currentNode %>.json">View JSON</a><br/><br/>
+<br/><a href="/apps/usermgr.html">Return to User Manager</a>
+<script type="text/javascript">
+    document.body.onload = function() {
+        var req = new WebRequest("GET","<%= currentNode %>.json");
+        req.response.then(resp => {
+            var jsonObj = JSON.parse(resp.body);
+
+            var fieldIdx = 0;
+
+            Object.keys(jsonObj).forEach(property => {
+                var fieldName ="userprop" + fieldIdx.toString();
+
+                var field = document.createElement('input');
+                field.readOnly = true;
+                field.type = "text";
+                field.id = fieldName;
+                field.value = jsonObj[property];
+
+                var fieldLabel = document.createElement('label');
+                fieldLabel.setAttribute('for',fieldName);
+                fieldLabel.style.paddingRight = "10px";
+                fieldLabel.innerText = property;
+                document.getElementById('userproperties').appendChild(fieldLabel);
+                document.getElementById('userproperties').appendChild(field);
+                document.getElementById('userproperties').appendChild(document.createElement('br'));
+
+                fieldIdx++;
+            });
+        });
+    };
+</script>
+
 </body>
 </html>

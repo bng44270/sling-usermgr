@@ -2,40 +2,9 @@
 <head>
 <title>Create User</title>
 <script src="/system/sling.js"></script>
-<script type="text/javascript">
-    function getJSON(url) {
-        var resp ;
-        var xmlHttp ;
-
-        resp  = '' ;
-        xmlHttp = new XMLHttpRequest();
-
-        if(xmlHttp != null)
-        {
-            xmlHttp.open( "GET", url, false );
-            xmlHttp.send( null );
-            resp = xmlHttp.responseText;
-        }
-
-        return resp ;
-    }
-
-    function loadUsers() {
-        var jsontext = getJSON('/system/userManager/user.1.json');
-        var usersObj = JSON.parse(jsontext);
-
-        var validUsers = Object.keys(usersObj).filter(x => x != 'anonymous').forEach(thisUser => {
-            var listItem = document.createElement('li');
-            var link = document.createElement('a');
-            link.href = usersObj[thisUser].path + ".html";
-            link.innerText = thisUser;
-            listItem.appendChild(link);
-            document.getElementById('userlist').appendChild(listItem);
-        });
-    }
-</script>
+<script type="text/javascript" src="/etc/clientlibs/webrequest.js"></script>
 </head>
-<body onLoad="loadUsers();">
+<body>
 <h3>Create New User</h3>
 <form method="POST" action="/system/userManager/user.create.html">
 Username<input type="text" name=":name" onChange="document.getElementById('uid').value = this.value;" /><br/>
@@ -46,8 +15,26 @@ Confirm:<input type="password" name="pwdConfirm" /><br/>
 <input type="submit" value="Create User" />
 </form>
 <h3>Existing Users</h3>
-  <ul id="userlist">
-  </ul>
+<ul id="userlist">
+</ul>
+<script type="text/javascript">
+    document.body.onload = function() {
+        var req = new WebRequest("GET","/system/userManager/user.1.json");
+
+        req.response.then(resp => {
+            var usersObj = JSON.parse(resp.body);
+
+            var validUsers = Object.keys(usersObj).filter(x => x != 'anonymous').forEach(thisUser => {
+                var listItem = document.createElement('li');
+                var link = document.createElement('a');
+                link.href = usersObj[thisUser].path + ".html";
+                link.innerText = thisUser;
+                listItem.appendChild(link);
+                document.getElementById('userlist').appendChild(listItem);
+            });
+        });
+    };
+</script>
 </body>
 </html>
 
