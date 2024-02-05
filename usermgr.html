@@ -6,19 +6,40 @@
 </head>
 <body>
 <h3>Create New User</h3>
-<form method="POST" action="/system/userManager/user.create.html">
-Username<input type="text" name=":name" onChange="document.getElementById('uid').value = this.value;" /><br/>
-Password:<input type="password" name="pwd" /><br/>
-Confirm:<input type="password" name="pwdConfirm" /><br/>
-<input type="hidden" name="uid" id="uid" />
-<input type="hidden" name="sling:resourceType" value="users/edit" />
-<input type="submit" value="Create User" />
-</form>
+Username<input type="text" id="newusername" /><br/>
+Password:<input type="password" id="newpasswd" /><br/>
+Confirm:<input type="password" id="newpasswdconf" /><br/>
+<button id="createuserbtn">Create User</button><br/>
 <h3>Existing Users</h3>
 <ul id="userlist">
 </ul>
 <script type="text/javascript">
     document.body.onload = function() {
+        document.getElementById('createuserbtn').onclick = function() {
+            var newUsername = document.getElementById('newusername').value;
+            var newPasswd = document.getElementById('newpasswd').value;
+            var newPasswdConf = document.getElementById('newpasswdconf').value;
+
+            var thisFormData = new FormData();
+            thisFormData.append(":name",newUsername);
+            thisFormData.append("pwd",newPasswd);
+            thisFormData.append("pwdConfirm",newPasswdConf);
+            thisFormData.append("uid",newUsername);
+            thisFormData.append("sling:resourceType","users/edit");
+
+            var req = new WebRequest('POST','/system/userManager/user.create.html',{
+                data : thisFormData
+            });
+
+            req.response.then(resp => {
+                var req2 = new WebRequest("GET","/system/userManager/user/" + newUsername + ".1.json");
+                req2.response.then(resp => {
+                    var obj = JSON.parse(resp.body);
+                   location.href = obj['path'] + '.html'; 
+                });
+            })
+        };
+
         var req = new WebRequest("GET","/system/userManager/user.1.json");
 
         req.response.then(resp => {

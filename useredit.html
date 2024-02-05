@@ -12,37 +12,48 @@
 <input type="submit" value="Change Password" />
 </form><br/>
 <h3>User Information (JSON)</h3>
-<div id="userproperties"></div>
-<a href="<%= currentNode %>.json">View JSON</a><br/><br/>
-<br/><a href="/apps/usermgr.html">Return to User Manager</a>
+<pre id="userproperties"></pre><br/>
+<button id="enabledisablebtn">Disable</button><br/>
+<br/><a href="/apps/users.html">Return to User Manager</a>
 <script type="text/javascript">
     document.body.onload = function() {
-        var req = new WebRequest("GET","<%= currentNode %>.json");
-        req.response.then(resp => {
-            var jsonObj = JSON.parse(resp.body);
+        function loadUserJson() {
+            var req = new WebRequest("GET","<%= currentNode %>.tidy.json");
+                req.response.then(resp => {
+                document.getElementById('userproperties').innerText = resp.body;
 
-            var fieldIdx = 0;
+                var jsonObj = JSON.parse(resp.body);
 
-            Object.keys(jsonObj).forEach(property => {
-                var fieldName ="userprop" + fieldIdx.toString();
-
-                var field = document.createElement('input');
-                field.readOnly = true;
-                field.type = "text";
-                field.id = fieldName;
-                field.value = jsonObj[property];
-
-                var fieldLabel = document.createElement('label');
-                fieldLabel.setAttribute('for',fieldName);
-                fieldLabel.style.paddingRight = "10px";
-                fieldLabel.innerText = property;
-                document.getElementById('userproperties').appendChild(fieldLabel);
-                document.getElementById('userproperties').appendChild(field);
-                document.getElementById('userproperties').appendChild(document.createElement('br'));
-
-                fieldIdx++;
+                if (Object.keys(jsonObj).indexOf('rep:disabled') > -1) {
+                    document.getElementById('enabledisablebtn').innerText = 'Enable';
+                }
+                else {
+                    document.getElementById('enabledisablebtn').innerText = 'Disable';
+                }
             });
-        });
+        }
+
+        document.getElementById('enabledisablebtn').onclick = function() {
+            var isEnabled = this.innerText == 'Disable';
+            
+            var thisFormData = new FormData();
+            if (isEnabled) {
+                thisFormData.append(":disabled","true");
+            }
+            else {
+                thisFormData.append(":disabled","false");
+            }
+                       
+            var req = new WebRequest("POST","/system/userManager/user/<%= currentNode.uid %>.update.html",{
+                data : thisFormData
+            });
+
+            req.response.then(resp => {
+                loadUserJson();
+            });
+        };
+
+        loadUserJson();
     };
 </script>
 

@@ -45,7 +45,7 @@ curl -s -u $(call slingauthstr) -T $(1) $(call slingurlstr,$(2)) > /dev/null
 endef
 
 define slingsetproperty
-curl -s -u $(call slingauthstr) -F"$(1)" $(call slingurlstr,$(2)) > /dev/null
+curl -X POST -s -u $(call slingauthstr) -F"$(1)" $(call slingurlstr,$(2)) > /dev/null
 endef
 
 
@@ -53,7 +53,6 @@ all: tmp/users.json
 	$(call slingmkcol,/apps/users)
 	$(call slingmkcol,/apps/users/edit)
 	$(call slingmkcol,/apps/users/manage)
-	$(call slingmkcol,/apps/usermgr)
 	$(call slinguploadfile,useredit.html,/apps/users/edit/html.esp)
 	$(call slinguploadfile,usermgr.html,/apps/users/manage/html.esp)
 	$(call slinguploadfile,webrequest.js,/etc/clientlibs/webrequest.js)
@@ -62,7 +61,7 @@ all: tmp/users.json
 		$(call slingsetproperty,sling:resourceType=users/edit,$${USERPATH}.html) ; \
 		$(call slingsetproperty,uid=$${THISUSR},$${USERPATH}.html) ; \
 	done
-	$(call slingsetproperty,sling:resourceType=users/manage,/apps/usermgr)
+	$(call slingsetproperty,sling:resourceType=users/manage,/apps/users)
 
 clean:
 	rm -rf tmp

@@ -6,4 +6,4 @@
 
 ### Using
 1. Authenticate to Sling instance as admin
-2. Once logged in, navigate to http://HOST:PORT/apps/usermgr.html
+2. Once logged in, navigate to http://HOST:PORT/apps/users.html
