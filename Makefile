@@ -69,6 +69,7 @@ all: tmp/users.json
 
 clean:
 	rm -rf tmp
+	rm -rf lib/__pycache__
 
 tmp/server.txt: tmp
 	$(call newdefine,Enter protocol,PROTO,http,tmp/server.txt)
