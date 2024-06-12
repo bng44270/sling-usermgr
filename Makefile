@@ -7,6 +7,7 @@ USERS_FILE = ${TMP_FOLDER}/users.json
 CONF_FILE = ${TMP_FOLDER}/server.txt
 GET_USER_LIST = ${LIB_FOLDER}/getusers.py
 GET_USER_PATH = ${LIB_FOLDER}/getuserpath.py
+STARTPAGE_AWK = ${LIB_FOLDER}/startpage.awk
 ##################################
 
 SHELL := bash
@@ -55,7 +56,7 @@ all: tmp/users.json
 	$(call slingmkcol,/apps/users)
 	$(call slingmkcol,/apps/users/edit)
 	$(call slingmkcol,/apps/users/manage)
-	curl -u $(call slingauthstr) -s $(call slingurlstr,${HOMEPAGE_URL}) | awk 'BEGIN { mod = 0 } />Browse Content</ { print "                            <li><a href=\"/apps/users.html\" title=\"User Manager\">User Manager</a></li>" ; print; mod = 1; } { if (mod == 1) { mod = 0; } else { print; } }' > ${HOMEPAGE_TMP}
+	curl -u $(call slingauthstr) -s $(call slingurlstr,${HOMEPAGE_URL}) | awk -f ${STARTPAGE_AWK} > ${HOMEPAGE_TMP}
 	$(call slinguploadfile,${HOMEPAGE_TMP},${HOMEPAGE_URL})
 	$(call slinguploadfile,useredit.html,/apps/users/edit/html.esp)
 	$(call slinguploadfile,usermgr.html,/apps/users/manage/html.esp)
