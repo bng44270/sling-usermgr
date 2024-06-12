@@ -1,0 +1,4 @@
+#define PROTO http
+#define HOSTPORT 10.0.3.61:8080
+#define SLINGUSER admin
+#define SLINGPASS admin
