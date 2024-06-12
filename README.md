@@ -6,5 +6,5 @@
 
 ### Using
 1. Go to your sling instance (ex. hostname-ip:8080)
-2. Click the **Login** link and authenticate at `admin`
+2. Click the **Login** link and authenticate as `admin`
 3. Once authenticated, click the **User Manager** link 
