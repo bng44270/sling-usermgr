@@ -5,9 +5,9 @@ This application is designed to work with the Apache Sling Feature Model Launche
 ### Installing
 1. Clone repository
 2. ```make```
-3. Enter preferences as prompted
+3. Upload/install ```build/usermgr.zip``` package onto Sling instance
 
 ### Using
-1. Go to your sling instance (ex. hostname-ip:8080)
+1. Go to your Sling instance (ex. hostname-ip:8080)
 2. Click the **Login** link and authenticate as `admin`
-3. Once authenticated, click the **User Manager** link 
+3. Once authenticated, navigate to ```http://hosname-ip:8080/apps/users.html``` 

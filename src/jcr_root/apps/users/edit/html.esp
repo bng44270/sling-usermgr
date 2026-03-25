@@ -1,0 +1,54 @@
+<html>
+<head>
+<title>UserManager-<%= currentNode.uid %></title>
+</head>
+<script type="text/javascript" src="/etc/clientlibs/webrequest.js"></script>
+<script type="text/javascript" src="/etc/clientlibs/slinglib.js"></script>
+<body>
+<h3>Change Password for <%= currentNode.uid %></h3>
+<form method="POST" action="/system/userManager/user/<%= currentNode.uid %>.changePassword.html">
+<label for="oldPwd">Old Password</label><input id="oldPwd" type="password" name="oldPwd" /><br/>
+<label for="newPwd">New Password</label><input id="newPwd" type="password" name="newPwd" /><br/>
+<label for="newPwdConfirm">Confirm New</label><input id="newPwdConfirm" type="password" name="newPwdConfirm" /><br/>
+<input type="submit" value="Change Password" />
+</form><br/>
+<h3>User Information (JSON)</h3>
+<pre id="userproperties"></pre><br/>
+<button id="enabledisablebtn">Disable</button><br/>
+<br/><a href="/apps/users.html">Return to User Manager</a>
+<script type="text/javascript">
+    document.body.onload = function() {
+        function loadUserJson() {
+            var req = new WebRequest("GET","<%= currentNode %>.tidy.json");
+                req.response.then(resp => {
+                document.getElementById('userproperties').innerText = resp.body;
+
+                var jsonObj = JSON.parse(resp.body);
+
+                if (Object.keys(jsonObj).indexOf('rep:disabled') > -1) {
+                    document.getElementById('enabledisablebtn').innerText = 'Enable';
+                }
+                else {
+                    document.getElementById('enabledisablebtn').innerText = 'Disable';
+                }
+            });
+        }
+
+        document.getElementById('enabledisablebtn').onclick = function() {
+            var res = new SlingResource(location.origin);
+
+            var userPath = '/system/userManager/user/<%= currentNode.uid %>.update.html';
+
+            var isEnabled = this.innerText == 'Disable';
+            
+            res.setProperty(userPath,':disabled',isEnabled.toString()).then(userUpdated => {
+                loadUserJson();
+            });
+        };
+
+        loadUserJson();
+    };
+</script>
+
+</body>
+</html>

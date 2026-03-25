@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0" xmlns:vlt="http://www.day.com/jcr/vault/1.0"
+    jcr:created="{Date}2026-03-24T23:30:33.335-05:00"
+    jcr:createdBy="admin"
+    jcr:lastModified="{Date}2026-03-24T23:30:33.335-05:00"
+    jcr:lastModifiedBy="admin"
+    jcr:primaryType="vlt:PackageDefinition"
+    buildCount="6"
+    dependencies="[]"
+    group="usermgr"
+    lastUnwrapped="{Date}2026-03-24T23:30:33.335-05:00"
+    lastUnwrappedBy="admin"
+    lastWrapped="{Date}2026-03-24T23:30:33.335-05:00"
+    lastWrappedBy="admin"
+    name="usermgr"
+    requiresRestart="{Boolean}false"
+    requiresRoot="{Boolean}false"
+    version="1">
+    <filter jcr:primaryType="nt:unstructured">
+        <f0
+            jcr:primaryType="nt:unstructured"
+            mode="replace"
+            propertyRules="[]"
+            root="/apps/users"
+            rules="[]"/>
+        <f1
+            jcr:primaryType="nt:unstructured"
+            mode="replace"
+            root="/etc/clientlibs/webrequest.js"
+            rules="[]"/>
+        <f2
+            jcr:primaryType="nt:unstructured"
+            mode="replace"
+            propertyRules="[]"
+            root="/etc/clientlibs/slinglib.js"
+            rules="[]"/>
+    </filter>
+</jcr:root>
