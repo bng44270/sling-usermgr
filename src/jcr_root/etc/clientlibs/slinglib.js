@@ -26,4 +26,14 @@ class SlingResource {
             return (resp.status == 200);
         });
     }
+
+    async createCollection(path) {
+        var reqUrl = `${this.baseUrl}${path}`;
+        
+        var req = new WebRequest('MKCOL',reqUrl);
+        
+        return await req.response.then(resp => {
+            return (resp.status == 201);
+        });
+    }
 }
