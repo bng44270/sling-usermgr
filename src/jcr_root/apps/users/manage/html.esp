@@ -25,7 +25,9 @@ Confirm:<input type="password" id="newpasswdconf" /><br/>
         new WebRequest('GET','/system/userManager/user.1.json').response.then(resp => {
             var userData = JSON.parse(resp.body);
 
-            Object.keys(userData).forEach(thisUser => {
+            Object.keys(userData).filter(thisUser => {
+                return (typeof userData[thisUser] == 'object');
+            }).forEach(thisUser => {
                 var userPathHtml = userData[thisUser]['path'] + '.html';
                 var userPathJson = userData[thisUser]['path'] + '.json';
 
@@ -72,7 +74,7 @@ Confirm:<input type="password" id="newpasswdconf" /><br/>
                 var req2 = new WebRequest("GET","/system/userManager/user/" + newUsername + ".1.json");
                 req2.response.then(resp => {
                     var obj = JSON.parse(resp.body);
-                   location.href = obj['path'] + '.html'; 
+                   location.href = obj['path'] + '.html';
                 });
             })
         };
@@ -80,7 +82,7 @@ Confirm:<input type="password" id="newpasswdconf" /><br/>
         new WebRequest("GET","/system/userManager/user.1.json").response.then(resp => {
             var usersObj = JSON.parse(resp.body);
 
-            var validUsers = Object.keys(usersObj).filter(x => x != 'anonymous').forEach(thisUser => {
+            Object.keys(usersObj).filter(x => x != 'anonymous' && typeof usersObj[x] == 'object').forEach(thisUser => {
                 var listItem = document.createElement('li');
                 var link = document.createElement('a');
                 link.href = usersObj[thisUser].path + ".html";
