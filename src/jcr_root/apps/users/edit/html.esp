@@ -42,7 +42,9 @@
             var isEnabled = this.innerText == 'Disable';
             
             res.setProperty(userPath,':disabled',isEnabled.toString()).then(userUpdated => {
-                loadUserJson();
+                if (userUpdated) {
+                    loadUserJson();
+                }
             });
         };
 
