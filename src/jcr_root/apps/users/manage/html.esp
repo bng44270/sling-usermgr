@@ -33,7 +33,6 @@ Confirm:<input type="password" id="newpasswdconf" /><br/>
                     if (!resType) {
                         res.setProperty(userPathHtml,'sling:resourceType','users/edit').then(createdResType => {
                             if (!createdResType) {
-                                document.getElementById('userloadstatus').innerText = 'Error';
                                 throw Error("Error configuring user resource type (" + thisUser + ")");
                             }
                         });
@@ -41,7 +40,6 @@ Confirm:<input type="password" id="newpasswdconf" /><br/>
 
                         res.setProperty(userPathHtml,'uid',thisUser).then(createdUid => {
                             if (!createdUid) {
-                                document.getElementById('userloadstatus').innerText = 'Error';
                                 throw Error("Error configuring user UID (" + thisUser + ")");
                             }
                         });
