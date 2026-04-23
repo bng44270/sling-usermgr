@@ -16,9 +16,11 @@ endef
 SHELL := bash
 
 all: ${BUILD_FOLDER}
+	@echo -n "Checking dependencies..."
 	$(call checkfile,zip)
 	$(call checkfile,m4)
 	$(call checkfile,git)
+	@echo "complete"
 	@echo -n "Setting version..."
 	@m4 -DVERSIONFIELD="$$(git rev-parse --short HEAD)" ${MANIFEST_M4} > ${MANIFEST_TARGET}
 	@m4 -DVERSIONFIELD="$$(git rev-parse --short HEAD)" ${PROPERTY_M4} > ${PROPERTY_TARGET}
