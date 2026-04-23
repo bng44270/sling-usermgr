@@ -13,7 +13,7 @@
 <entry key="lastModifiedBy">admin</entry>
 <entry key="buildCount">6</entry>
 <entry key="lastWrapped">2026-03-24T23:30:33.335-05:00</entry>
-<entry key="version">1</entry>
+<entry key="version">VERSIONFIELD</entry>
 <entry key="dependencies"></entry>
 <entry key="createdBy">admin</entry>
 <entry key="name">usermgr</entry>
