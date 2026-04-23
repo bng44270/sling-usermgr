@@ -11,15 +11,13 @@ Username<input type="text" id="newusername" /><br/>
 Password:<input type="password" id="newpasswd" /><br/>
 Confirm:<input type="password" id="newpasswdconf" /><br/>
 <button id="createuserbtn">Create User</button><br/>
-<h3>Loading Users:  <span id="userloadstatus"></span></h3>
+<h3>Users:</h3>
 <ul id="userlist">
 </ul><br/>
 <a href="/starter.html">Return to Sling Start Page</a>
 <script type="text/javascript">
     document.body.onload = function() {
         var res = new SlingResource(location.origin);
-
-        document.getElementById('userloadstatus').innerText = "In progress";
 
         //Verify Users are configured
         new WebRequest('GET','/system/userManager/user.1.json').response.then(resp => {
@@ -51,8 +49,6 @@ Confirm:<input type="password" id="newpasswdconf" /><br/>
                 });
             });
         });
-
-        document.getElementById('userloadstatus').innerText = "Complete";
 
         document.getElementById('createuserbtn').onclick = function() {
             var newUsername = document.getElementById('newusername').value;
